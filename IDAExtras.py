@@ -20,7 +20,6 @@ ACTION_NAME_IDA_EXTRAS = "idaextras"
 
 logger = Logger()
 
-
 ## Custom Export Window
 
 CUSTOM_EXPORT_WINDOW_DISPLAY_NAME = f"exports"
@@ -109,7 +108,9 @@ class context_handler_set_cmt(idaapi.action_handler_t):
 class ContextHooks(idaapi.UI_Hooks):
   def finish_populating_widget_popup(self, form, popup) -> None:
     flags = idaapi.get_flags(idaapi.get_screen_ea())
-    if idaapi.get_widget_type(form) in [idaapi.BWN_DISASM, idaapi.BWN_DUMP]:
+    major, minor = [int(v) for v in idaapi.get_kernel_version().split('.')]
+    hexdump = idaapi.BWN_HEXVIEW if major >= 9 else idaapi.BWN_DUMP
+    if idaapi.get_widget_type(form) in [idaapi.BWN_DISASM, hexdump]:
       if idc.read_selection_start() != idaapi.BADADDR and idc.read_selection_end() != idaapi.BADADDR:
         ## This is a quick simple context menu item to Copy Bytes (native functionality is Shift+E)
         action_copy_bytes = idaapi.action_desc_t(None, f"Copy Bytes", context_handler_copy_bytes())
