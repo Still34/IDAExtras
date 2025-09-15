@@ -36,7 +36,7 @@ There is even an `AutoFilter` option to remove all of the ones with `retn` mnemo
 
 ![](./documentation/IDAExtrasExports.png)
 
-[IDAExtrasExports.webm](./assets/40742023/7ad9dc0c-976b-4b35-9310-9c7188f8e19d)
+![Video demo](./documentation/IDAExtrasExports.mp4) <!-- todo: fix video --> 
 
 ### Copy Bytes
 
@@ -48,16 +48,6 @@ Whilst there is already a built-in IDA feature named `ExportData` (`SHIFT+E`) th
 - **Disassembler view**: Copies entire instruction lines when selection spans partial lines
 - **Hex viewer**: May occasionally include one extra byte when copying from the hex viewer
 - **Hex viewer**: Selection boundaries based on mouse clicks, not highlighted region
-
-**Demo: Dissassembler View**
-
-![CopyBytes_DissassemblerView.webm](./assets/40742023/fa330440-197a-46a1-9df5-a16216f32ede)
-
-![](./assets/40742023/e0a652bc-28ce-4d81-a6f9-da779c0dc4eb)
-
-**Demo: Hex Viewer**
-
-![](./assets/40742023/fd186a49-ad25-410f-8cdc-615e3379d6dc)
 
 ### Network Structure Decoding
 
@@ -71,7 +61,7 @@ The decoded values are automatically added as comments for future reference.
 
 **sockaddr_in.sin_addr representation**
 
-![](./documentation/IDAExtraIPAddr.png)
+![](./documentation/IDAExtrasIPAddr.png)
 
 **sockaddr_in.sin_port representation**
 
