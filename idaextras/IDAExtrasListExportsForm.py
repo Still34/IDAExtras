@@ -1,12 +1,21 @@
-import PyQt5.QtCore
-import PyQt5.QtGui
-import PyQt5.QtWidgets
-
 import idaapi
 import idautils
 
 from operator import itemgetter
 
+from idaextras.Helpers import get_ida_version
+
+ida_ver = get_ida_version()
+if ida_ver >= 9.2:
+  from PySide6 import QtCore
+  from PySide6 import QtGui
+  from PySide6 import QtWidgets
+  from PySide6.QtGui import QShortcut
+else:
+  from PyQt5 import QtCore
+  from PyQt5 import QtGui
+  from PyQt5 import QtWidgets
+  from PyQt5.QtWidgets import QShortcut
 
 class FunctionWalker():
   def countCallInstructions(self, ea):
@@ -24,19 +33,19 @@ class FunctionWalker():
     return count
 
 
-class ExportTableModel(PyQt5.QtCore.QAbstractTableModel):
+class ExportTableModel(QtCore.QAbstractTableModel):
   def __init__(self, data):
     super(ExportTableModel, self).__init__()
     self._data = data
     self.columns = ["Name", "Address", "Ordinal", "Is Code", "Starting Mnem", "Call Count", "Basic Blocks Count", "Function Size"]
 
   def data(self, index, role):
-    if role == PyQt5.QtCore.Qt.DisplayRole:
+    if role == QtCore.Qt.DisplayRole:
       return self._data[index.row()][index.column()]
 
   def headerData(self, section, orientation, role):
-    if role == PyQt5.QtCore.Qt.DisplayRole:
-      if orientation == PyQt5.QtCore.Qt.Horizontal:
+    if role == QtCore.Qt.DisplayRole:
+      if orientation == QtCore.Qt.Horizontal:
           return self.columns[section]
 
   def rowCount(self, index):
@@ -82,11 +91,11 @@ class ExportListUI(idaapi.PluginForm):
 
   def ActionAutoFilterToggled(self, checked):
     if checked:
-      self.isCodeFilterModel.setFilterRegularExpression(PyQt5.QtCore.QRegularExpression("[^False]", PyQt5.QtCore.QRegularExpression.CaseInsensitiveOption))
-      self.noRetnFilterModel.setFilterRegularExpression(PyQt5.QtCore.QRegularExpression("[^retn]", PyQt5.QtCore.QRegularExpression.CaseInsensitiveOption))
+      self.isCodeFilterModel.setFilterRegularExpression(QtCore.QRegularExpression("[^False]", QtCore.QRegularExpression.CaseInsensitiveOption))
+      self.noRetnFilterModel.setFilterRegularExpression(QtCore.QRegularExpression("[^retn]", QtCore.QRegularExpression.CaseInsensitiveOption))
     else:
-      self.isCodeFilterModel.setFilterRegularExpression(PyQt5.QtCore.QRegularExpression(".*", PyQt5.QtCore.QRegularExpression.CaseInsensitiveOption))
-      self.noRetnFilterModel.setFilterRegularExpression(PyQt5.QtCore.QRegularExpression(".*", PyQt5.QtCore.QRegularExpression.CaseInsensitiveOption))
+      self.isCodeFilterModel.setFilterRegularExpression(QtCore.QRegularExpression(".*", QtCore.QRegularExpression.CaseInsensitiveOption))
+      self.noRetnFilterModel.setFilterRegularExpression(QtCore.QRegularExpression(".*", QtCore.QRegularExpression.CaseInsensitiveOption))
 
 
   def ActionShowFilter(self):
@@ -94,46 +103,46 @@ class ExportListUI(idaapi.PluginForm):
     self.filterText.setFocus()
 
   def ActionTextFilter(self, text):
-    self.proxymodel.setFilterRegularExpression(PyQt5.QtCore.QRegularExpression(text, PyQt5.QtCore.QRegularExpression.CaseInsensitiveOption | PyQt5.QtCore.QRegularExpression.MultilineOption))
+    self.proxymodel.setFilterRegularExpression(QtCore.QRegularExpression(text, QtCore.QRegularExpression.CaseInsensitiveOption.value | QtCore.QRegularExpression.MultilineOption.value))
 
   def OnCreate(self, form):
     self.parent = self.FormToPyQtWidget(form)
-    self.layout = PyQt5.QtWidgets.QVBoxLayout()
+    self.layout = QtWidgets.QVBoxLayout()
 
-    self.filterWidget = PyQt5.QtWidgets.QWidget()
+    self.filterWidget = QtWidgets.QWidget()
     self.filterWidget.setVisible(False)
-    self.filterlayout = PyQt5.QtWidgets.QHBoxLayout(self.filterWidget)
-    self.filterText = PyQt5.QtWidgets.QLineEdit()
+    self.filterlayout = QtWidgets.QHBoxLayout(self.filterWidget)
+    self.filterText = QtWidgets.QLineEdit()
     self.filterText.textChanged.connect(self.ActionTextFilter)
-    self.closeButton = PyQt5.QtWidgets.QPushButton("X")
+    self.closeButton = QtWidgets.QPushButton("X")
     self.closeButton.setStyleSheet("color:rgb(93, 173, 226);font-weight: 900;")
-    self.closeButton.setFixedSize(PyQt5.QtCore.QSize(25, 25))
+    self.closeButton.setFixedSize(QtCore.QSize(25, 25))
     self.closeButton.clicked.connect(self.ActionFilterClosedClicked)
     self.closeButton.setToolTip("Close filter")
-    self.autoFilterCheckbox = PyQt5.QtWidgets.QCheckBox("Auto Filter")
+    self.autoFilterCheckbox = QtWidgets.QCheckBox("Auto Filter")
     self.autoFilterCheckbox.setToolTip("Removes:\n- `retn` from `Starting Mnem`\n- `False` from `Is Code`")
     self.autoFilterCheckbox.toggled.connect(self.ActionAutoFilterToggled)
     self.filterlayout.addWidget(self.closeButton)
     self.filterlayout.addWidget(self.autoFilterCheckbox)
     self.filterlayout.addWidget(self.filterText)
 
-    self.ctr_f_shortcut = PyQt5.QtWidgets.QShortcut(PyQt5.QtGui.QKeySequence(PyQt5.QtCore.Qt.CTRL + PyQt5.QtCore.Qt.Key_F), self.parent, activated=self.ActionShowFilter)
+    self.ctr_f_shortcut = QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL | QtCore.Qt.Key_F), self.parent, activated=self.ActionShowFilter)
 
-    self.table = PyQt5.QtWidgets.QTableView()
-    self.table.sortByColumn(0, PyQt5.QtCore.Qt.AscendingOrder)
-    self.table.setSelectionBehavior(PyQt5.QtWidgets.QAbstractItemView.SelectRows)
+    self.table = QtWidgets.QTableView()
+    self.table.sortByColumn(0, QtCore.Qt.AscendingOrder)
+    self.table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
     #self.table.setAlternatingRowColors(True)
     self.layout.addWidget(self.table)
     self.layout.addWidget(self.filterWidget)
     self.parent.setLayout(self.layout)
 
     self.model = ExportTableModel(self.GetExportData())
-    self.proxymodel = PyQt5.QtCore.QSortFilterProxyModel()
+    self.proxymodel = QtCore.QSortFilterProxyModel()
     ## Region: This is for the Auto Filter Toggle
-    self.isCodeFilterModel = PyQt5.QtCore.QSortFilterProxyModel()
+    self.isCodeFilterModel = QtCore.QSortFilterProxyModel()
     self.isCodeFilterModel.setSourceModel(self.model)
     self.isCodeFilterModel.setFilterKeyColumn(self.model.columns.index("Is Code"))
-    self.noRetnFilterModel = PyQt5.QtCore.QSortFilterProxyModel()
+    self.noRetnFilterModel = QtCore.QSortFilterProxyModel()
     self.noRetnFilterModel.setSourceModel(self.isCodeFilterModel)
     self.noRetnFilterModel.setFilterKeyColumn(self.model.columns.index("Starting Mnem"))
     ## End Region
