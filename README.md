@@ -1,10 +1,11 @@
 ## What is IDA Extras?
 
-IDA extras is a (growing) collection of IDA UI and other enhancements to overcome some challenges when using IDA.  If it possible to do these things natively in IDA, please let me know.
+IDA extras is a (growing) collection of IDA UI and other enhancements to overcome some challenges when using IDA. If what has been implemented is possible already in IDA, please file an [issue](https://github.com/Still34/IDAExtras/issues).
 
 ## How To Install?
 
-Drop idaextras directory and IDAExtras.py into IDA's plugin directory.
+1. Clone the repository
+2. Copy the `IDAExtras.py` file and `/idaextras` directory to your choice of plugin installation path (`%IDAUSR%/plugins` / `%IDADIR%/plugins`).
 
 ## What Are These Enhancements?
 
@@ -53,3 +54,8 @@ Right click on a DWORD or WORD in the dissassembly view to have the sin_addr and
 **sockaddr_in.sin_port representation**
 
 ![](./documentation/IDAExtrasPort.png)
+
+## History
+
+This repository/plugin was originally developed by @xorhex and its management rights were transferred to @Still34 on 2025/09/15 as the original maintainer has migrated to a different disassembler and no longer uses IDA.
+
