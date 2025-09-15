@@ -1,6 +1,7 @@
 # Author: @xorhex
 # Copyright: 2024
 
+from PySide6.QtGui import QClipboard
 __author__ = "https://infosec.exchange/@xorhex"
 
 import idaapi
@@ -16,11 +17,14 @@ if ida_ver >= 9.2:
     from PySide6 import QtCore
     from PySide6 import QtGui
     from PySide6 import QtWidgets
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtGui import QClipboard
     bwn_hex = idaapi.BWN_HEXVIEW
 else:
     from PyQt5 import QtCore
     from PyQt5 import QtGui
     from PyQt5 import QtWidgets
+    from PyQt5.QtWidgets import QApplication
     bwn_hex = idaapi.BWN_DUMP
 
 
@@ -70,9 +74,13 @@ class context_handler_copy_bytes(idaapi.action_handler_t):
         for b in instr_bites:
             bites.append(f'{b:02x}')
 
-        cb = QtWidgets.QApplication.instance().clipboard()
-        cb.clear(mode=cb.Clipboard)
-        cb.setText(f'{" ".join(bites)}', mode=cb.Clipboard)
+        cb = QApplication.instance().clipboard()
+        if ida_ver >= 9.2:
+            mode = QClipboard.Mode.Clipboard
+        else:
+            mode = cb.Clipboard
+        cb.clear(mode=mode)
+        cb.setText(f'{" ".join(bites)}', mode=mode)
 
     def update(self, ctx):
         return super().update(ctx)
