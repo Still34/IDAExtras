@@ -7,7 +7,7 @@ IDA extras is a (growing) collection of IDA UI and other enhancements to overcom
 - IDA Pro: Version 8.4 or higher \*
 - Python: 3.10+ \*
 
-\*: The plugin has not been tested on lower versions of these dependencies and is not guaranteed to work. You may test it at your own risk.
+\* *Tested on versions listed above and higher. May work with older versions but compatibility is not guaranteed.*
 
 ## Installation
 
