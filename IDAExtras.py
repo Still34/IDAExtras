@@ -1,14 +1,13 @@
 # Author: @xorhex
 # Copyright: 2024
 
-import struct
 __author__ = "https://infosec.exchange/@xorhex"
 
 import idaapi
 import idautils
 import idc
 
-from idaextras.Helpers import get_ida_version
+from idaextras.Helpers import dword_to_ip, get_ida_version, is_valid_ip, word_to_port
 from idaextras.Logger import Logger
 from idaextras.IDAExtrasListExportsForm import ExportListUI
 
@@ -32,7 +31,7 @@ logger = Logger()
 
 # Custom Export Window
 
-CUSTOM_EXPORT_WINDOW_DISPLAY_NAME = f"exports"
+CUSTOM_EXPORT_WINDOW_DISPLAY_NAME = "exports"
 CUSTOM_EXPORT_WINDOW = f"{ACTION_NAME_IDA_EXTRAS}:{CUSTOM_EXPORT_WINDOW_DISPLAY_NAME}"
 
 
@@ -77,38 +76,6 @@ class context_handler_copy_bytes(idaapi.action_handler_t):
 
     def update(self, ctx):
         return super().update(ctx)
-
-# Region
-# Helper Functions
-# Convert hard coded data into sockaddr_in.sin_port and sockaddr_in.sin_addr types
-
-
-def dword_to_ip(dword: int) -> str:
-    ip = []
-    for x in range(4):
-        ip.append(str((dword >> (8 * x)) & 0xff))
-    return '.'.join(ip)
-
-
-def is_valid_ip(ip: str) -> bool:
-    """
-    This function is not perfect as an IP address can end in 255 but the likelyhood that a
-    threat actor is using it is low as it's reserved.  Same with IP addresses that start
-    with 0.
-    """
-    parts = ip.split('.')
-    if len(parts) != 4:
-        return False
-    if int(parts[0], 10) == 0x0:
-        return False
-    if int(parts[3], 10) == 0xff:
-        return False
-    return True
-
-
-def word_to_port(word: int) -> str:
-    return str(struct.unpack('>H', struct.pack('<H', word))[0])
-# End Region
 
 
 class context_handler_set_cmt(idaapi.action_handler_t):
