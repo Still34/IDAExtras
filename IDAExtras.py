@@ -1,8 +1,7 @@
-# Author: @xorhex
-# Copyright: 2024
+# Author: @xorhex / @Still34
+# Copyright: 2025
 
-from PySide6.QtGui import QClipboard
-__author__ = "https://infosec.exchange/@xorhex"
+__author__ = ["https://infosec.exchange/@xorhex", "https://x.com/AzakaSekai_"]
 
 import idaapi
 import idautils
