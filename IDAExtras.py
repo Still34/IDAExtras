@@ -7,12 +7,21 @@ import idaapi
 import idautils
 import idc
 
+from idaextras.Helpers import get_ida_version
 from idaextras.Logger import Logger
 from idaextras.IDAExtrasListExportsForm import ExportListUI
 
-import PyQt5.QtCore
-import PyQt5.QtGui
-import PyQt5.QtWidgets
+ida_ver = get_ida_version()
+if ida_ver >= 9.2:
+  from PySide6 import QtCore
+  from PySide6 import QtGui
+  from PySide6 import QtWidgets
+  bwn_hex = idaapi.BWN_HEXVIEW
+else:
+  from PyQt5 import QtCore
+  from PyQt5 import QtGui
+  from PyQt5 import QtWidgets
+  bwn_hex = idaapi.BWN_DUMP
 
 import struct
 
@@ -60,7 +69,7 @@ class context_handler_copy_bytes(idaapi.action_handler_t):
     for b in instr_bites:
       bites.append(f'{b:02x}')
 
-    cb = PyQt5.QtWidgets.QApplication.instance().clipboard()
+    cb = QtWidgets.QApplication.instance().clipboard()
     cb.clear(mode = cb.Clipboard)
     cb.setText(f'{" ".join(bites)}', mode=cb.Clipboard)
 
@@ -109,7 +118,7 @@ class context_handler_set_cmt(idaapi.action_handler_t):
 class ContextHooks(idaapi.UI_Hooks):
   def finish_populating_widget_popup(self, form, popup) -> None:
     flags = idaapi.get_flags(idaapi.get_screen_ea())
-    if idaapi.get_widget_type(form) in [idaapi.BWN_DISASM, idaapi.BWN_DUMP]:
+    if idaapi.get_widget_type(form) in [idaapi.BWN_DISASM, bwn_hex]:
       if idc.read_selection_start() != idaapi.BADADDR and idc.read_selection_end() != idaapi.BADADDR:
         ## This is a quick simple context menu item to Copy Bytes (native functionality is Shift+E)
         action_copy_bytes = idaapi.action_desc_t(None, f"Copy Bytes", context_handler_copy_bytes())
