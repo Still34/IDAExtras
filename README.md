@@ -1,51 +1,73 @@
-## What is IDA Extras?
+# IDA Extras
 
-IDA extras is a (growing) collection of IDA UI and other enhancements to overcome some challenges when using IDA. If what has been implemented is possible already in IDA, please file an [issue](https://github.com/Still34/IDAExtras/issues).
+IDA extras is a (growing) collection of IDA UI and other enhancements to overcome some challenges when using IDA.
 
-## How To Install?
+## Prerequisites
 
-1. Clone the repository
-2. Copy the `IDAExtras.py` file and `/idaextras` directory to your choice of plugin installation path (`%IDAUSR%/plugins` / `%IDADIR%/plugins`).
+- IDA Pro: Version 8.4 or higher \*
+- Python: 3.10+ \*
 
-## What Are These Enhancements?
+\*: The plugin has not been tested on lower versions of these dependencies and is not guaranteed to work. You may test it at your own risk.
 
-### 1. Exports
+## Installation
 
-`IDA Extras: Exports` renders another tab similar to the default Exports tab but will provide additional detail about the exports.  This interface came about due to wanting a quick way to find exports of interest when dealing with many exports where a number of them are just retn statements.  There is even an `AutoFilter` option to remove all of the ones with `retn` mnemonic or where the `Is Code` flag is `False`.
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/Still34/IDAExtras.git
+   ```
+
+2. **Copy plugin files**:
+   - Copy `IDAExtras.py` and the `/idaextras` directory to your IDA plugins folder:
+     - Windows: `%IDAUSR%/plugins` or `%IDADIR%/plugins`
+     - macOS/Linux: `$IDAUSR/plugins` or `$IDADIR/plugins`
+
+3. **Verify installation**:
+   - Restart IDA Pro
+   - Check that "IDA Extras" appears in the plugins menu
+
+## Features
+
+### Exports
+
+`IDA Extras: Exports` renders another tab similar to the default Exports tab but will provide additional detail about the exports.  This interface came about due to wanting a quick way to find exports of interest when dealing with many exports where a number of them are just `retn` statements.
+
+There is even an `AutoFilter` option to remove all of the ones with `retn` mnemonic or where the `Is Code` flag is `False`.
 
 ![](./documentation/IDAExtrasExports.png)
 
-**Video**
+[IDAExtrasExports.webm](./assets/40742023/7ad9dc0c-976b-4b35-9310-9c7188f8e19d)
 
-[IDAExtrasExports.webm](https://github.com/xorhex/IDAExtras/assets/40742023/7ad9dc0c-976b-4b35-9310-9c7188f8e19d)
+### Copy Bytes
 
-The export screen is started in the video using the shortcut key.  The menu item was not clicked; just shown.
+Adds a convenient **Copy Bytes** option to the right-click context menu in both disassembler and hex views.
 
-### 2. Copy Bytes
+Whilst there is already a built-in IDA feature named `ExportData` (`SHIFT+E`) that does a similar thing, this implementation makes it just a little faster without having to manually copy paste the output from the Qt window.
 
-`Copy Bytes` works in both the dissembler view and the hex view.  This enchancement copies the bytes selected on the screen.  It's not perfect, but it gets the job done.
+**Known Limitations**:
+- **Disassembler view**: Copies entire instruction lines when selection spans partial lines
+- **Hex viewer**: May occasionally include one extra byte when copying from the hex viewer
+- **Hex viewer**: Selection boundaries based on mouse clicks, not highlighted region
 
-The build-in IDA shortcut is `Shift-E` which gives the user more options but sometimes it's nice to have a quick copy bytes in the right click menu.
+**Demo: Dissassembler View**
 
-Caveat 1: When copying selected bytes in the dissassembler view it makes use of `idc.read_selection_end()` and `idc.read_selection_start()` which, when in the dissassembler view, means all of the bytes on each line are captured.  So if the highlight starts in the middle of one line and ends in the middle of the next line then all of the instructions for both will be copied.
+![CopyBytes_DissassemblerView.webm](./assets/40742023/fa330440-197a-46a1-9df5-a16216f32ede)
 
-Caveat 2: When copying the bytes in the hex viewer, sometimes one additional byte gets added to the contents copied.
+![](./assets/40742023/e0a652bc-28ce-4d81-a6f9-da779c0dc4eb)
 
-Caveat 3: When copying bytes in the hex viewer, the start and stop positions are determined by when the mouse was clicked and then let up - it does NOT match the contents that get highlighted!
+**Demo: Hex Viewer**
 
-**Video: Dissassembler View**
+![](./assets/40742023/fd186a49-ad25-410f-8cdc-615e3379d6dc)
 
-[CopyBytes_DissassemblerView.webm](https://github.com/xorhex/IDAExtras/assets/40742023/fa330440-197a-46a1-9df5-a16216f32ede)
+### Network Structure Decoding
 
-https://github.com/xorhex/IDAExtras/assets/40742023/e0a652bc-28ce-4d81-a6f9-da779c0dc4eb
+Right-click on `DWORD` or `WORD` values in the disassembly to decode network-related data structures.
 
-**Video: Hex Viewer**
+**Supported Formats**:
+- **sockaddr_in.sin_addr**: Converts 4-byte values to IP address format
+- **sockaddr_in.sin_port**: Converts 2-byte values to port numbers
 
-https://github.com/xorhex/IDAExtras/assets/40742023/fd186a49-ad25-410f-8cdc-615e3379d6dc
-
-### 3. sockaddr_in.sin_addr and sockaddr_in.sin_port
-
-Right click on a DWORD or WORD in the dissassembly view to have the sin_addr and/or the sin_port number representation of those bytes displayed.  Upon selecting the value in the context menu, the string representation is then added as a comment.
+The decoded values are automatically added as comments for future reference.
 
 **sockaddr_in.sin_addr representation**
 
@@ -55,7 +77,14 @@ Right click on a DWORD or WORD in the dissassembly view to have the sin_addr and
 
 ![](./documentation/IDAExtrasPort.png)
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ## History
 
-This repository/plugin was originally developed by @xorhex and its management rights were transferred to @Still34 on 2025/09/15 as the original maintainer has migrated to a different disassembler and no longer uses IDA.
+This repository was originally developed by [@xorhex](https://github.com/xorhex) and transferred to [@Still34](https://github.com/Still34) on September 15, 2025, as the original maintainer has migrated to a different disassembler platform.
 
+***
+
+**Note**: If any functionality described here is already available in IDA Pro through built-in features, please [file an issue](https://github.com/Still34/IDAExtras/issues) so we can evaluate whether the enhancement is still needed.
