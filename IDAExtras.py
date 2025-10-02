@@ -12,18 +12,23 @@ from idaextras.Logger import Logger
 from idaextras.IDAExtrasListExportsForm import ExportListUI
 
 ida_ver = get_ida_version()
+print(f"[*] Loaded IDA version: {ida_ver}")
 if ida_ver >= 9.2:
+    print("Loading exports for 9.2+")
     from PySide6 import QtCore
     from PySide6 import QtGui
     from PySide6 import QtWidgets
     from PySide6.QtWidgets import QApplication
     from PySide6.QtGui import QClipboard
-    bwn_hex = idaapi.BWN_HEXVIEW
 else:
+    print(f"[*] Loading exports for 9.1 or below")
     from PyQt5 import QtCore
     from PyQt5 import QtGui
     from PyQt5 import QtWidgets
     from PyQt5.QtWidgets import QApplication
+if ida_ver >= 9.0:
+    bwn_hex = idaapi.BWN_HEXVIEW
+else:
     bwn_hex = idaapi.BWN_DUMP
 
 
